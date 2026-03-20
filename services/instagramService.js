@@ -1,5 +1,8 @@
 const axios = require('axios');
 
+// Wait helper
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const postToInstagram = async (accessToken, accountId, imageUrl, caption) => {
   try {
     // Step 1: Create Media Container
@@ -21,7 +24,39 @@ const postToInstagram = async (accessToken, accountId, imageUrl, caption) => {
       throw new Error('Failed to create Instagram media container');
     }
 
-    // Step 2: Publish Media Container
+    console.log(`✅ Media container created: ${creationId}. Waiting for it to be ready...`);
+
+    // Step 1.5: Poll until container status is FINISHED (Instagram requires this)
+    const MAX_RETRIES = 10;
+    const POLL_INTERVAL_MS = 5000; // 5 seconds between each check
+    let status = '';
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      await wait(POLL_INTERVAL_MS);
+
+      const statusResponse = await axios.get(
+        `https://graph.facebook.com/v19.0/${creationId}`,
+        {
+          params: {
+            fields: 'status_code',
+            access_token: accessToken
+          }
+        }
+      );
+
+      status = statusResponse.data?.status_code;
+      console.log(`⏳ Container status check (${attempt}/${MAX_RETRIES}): ${status}`);
+
+      if (status === 'FINISHED') break;
+      if (status === 'ERROR') throw new Error('Instagram media container processing failed (status: ERROR)');
+    }
+
+    if (status !== 'FINISHED') {
+      throw new Error(`Media container not ready after ${MAX_RETRIES} attempts. Last status: ${status}`);
+    }
+
+    // Step 2: Publish Media Container (only after FINISHED)
+    console.log('🚀 Publishing media container...');
     const publishResponse = await axios.post(
       `https://graph.facebook.com/v19.0/${accountId}/media_publish`,
       {
@@ -41,6 +76,7 @@ const postToInstagram = async (accessToken, accountId, imageUrl, caption) => {
     throw new Error(`Instagram Posting Failed: ${errorMessage}`);
   }
 };
+
 
 const getInstagramAccountDetails = async (accessToken) => {
   try {

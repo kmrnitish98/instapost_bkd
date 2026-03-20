@@ -142,12 +142,12 @@ const generateImage = async (freepikApiKey, imgbbApiKey, prompt) => {
       { headers: form.getHeaders() }
     );
 
-    const publicUrl = imgbbResponse.data?.data?.url;
+    const publicUrl = imgbbResponse.data?.data?.url || imgbbResponse.data?.data?.display_url;
     if (!publicUrl) {
-      throw new Error('Imgbb did not return a public URL');
+      throw new Error('Imgbb did not return a valid public URL (checked url and display_url)');
     }
 
-    console.log('Image uploaded to Imgbb:', publicUrl);
+    console.log('✅ Image uploaded to Imgbb:', publicUrl);
     return publicUrl;
   } catch (error) {
     console.error('Imgbb Upload Error:', error.response?.data || error.message);

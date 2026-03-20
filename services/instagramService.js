@@ -5,6 +5,10 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const postToInstagram = async (accessToken, accountId, imageUrl, caption) => {
   try {
+    // Step 0: Small delay to let Imgbb URL "settle" for Facebook's crawler
+    console.log('⏳ Waiting 5 seconds for image URL to stabilize...');
+    await wait(5000);
+
     // Step 1: Create Media Container
     const containerResponse = await axios.post(
       `https://graph.facebook.com/v19.0/${accountId}/media`,
@@ -15,13 +19,14 @@ const postToInstagram = async (accessToken, accountId, imageUrl, caption) => {
       {
         params: {
           access_token: accessToken
-        }
+        },
+        timeout: 30000 // 30s timeout
       }
     );
 
     const creationId = containerResponse.data.id;
     if (!creationId) {
-      throw new Error('Failed to create Instagram media container');
+      throw new Error('Failed to create Instagram media container (no ID in response)');
     }
 
     console.log(`✅ Media container created: ${creationId}. Waiting for it to be ready...`);

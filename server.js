@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-const allowedOrigins = [
+const allowedOrigins = [ 
   'https://instapost-ebon.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000',
@@ -74,8 +74,11 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/instapost
         console.log('Synced settings from .env to database');
       }
     }
-
-    // Start scheduler
+        // Add this simple route for cron-job.org and health checks
+    app.get('/', (req, res) => {
+      res.status(200).send('Server is active and running');
+    });
+        // Start scheduler
     require('./cron/scheduler');
 
     app.listen(PORT, () => {

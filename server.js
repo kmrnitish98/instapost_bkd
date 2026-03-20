@@ -10,7 +10,23 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'https://instapost-ebon.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. Render health checks, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS blocked: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes
@@ -21,8 +37,8 @@ const Setting = require('./models/Setting');
 // Database Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/instapost')
   .then(async () => {
-    console.log('Connected to MongoDB');
-    
+    console.log(`✅ MongoDB Atlas connected: ${mongoose.connection.host}`);
+
     // Sync settings from .env
     let settings = await Setting.findOne();
     if (!settings) {
@@ -52,7 +68,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/instapost
         settings.instagramAccountId = process.env.INSTAGRAM_ACCOUNT_ID;
         updated = true;
       }
-      
+
       if (updated) {
         await settings.save();
         console.log('Synced settings from .env to database');
@@ -61,7 +77,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/instapost
 
     // Start scheduler
     require('./cron/scheduler');
-    
+
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

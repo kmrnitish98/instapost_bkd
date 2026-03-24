@@ -5,7 +5,7 @@ const { postToInstagram } = require('../services/instagramService');
 
 const triggerPost = async (req, res) => {
   let imageUrl = '';
-  const caption = 'Automated AI generated tech art #AI #Tech #Innovation';
+  const caption = 'Artificial Intelligence generated futuristic art 🤖✨ #ArtificialIntelligence #AI #AIRobot #FutureTech #AIArt';
 
   try {
     // 1. Fetch settings from MongoDB

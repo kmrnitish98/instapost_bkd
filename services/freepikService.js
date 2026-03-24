@@ -14,47 +14,25 @@ const cloudinary = require('cloudinary').v2;
 // ── Randomized Prompt System ────────────────────────────────────────────────
 // Large pool of diverse themes — completely different subjects each time
 const PROMPT_THEMES = [
-  // Sci-fi / Cyberpunk
-  'a cyberpunk samurai warrior in neon-lit Tokyo alleyway, rain reflections, katana glowing',
-  'a futuristic astronaut floating in deep space, nebula colors, helmet visor reflection, hyper realistic',
-  'a robot mechanic repairing a starship engine, industrial sci-fi workshop, sparks flying',
-  'a holographic city skyline at night, flying cars, neon signs, rain',
-  'a glowing alien marketplace with exotic creatures, bioluminescent lanterns, epic scale',
-
-  // Fantasy / Magic
-  'a powerful dragon perched on a crystal castle, lightning storm, fantasy epic, ultra detailed',
-  'an ancient wizard casting a spell in a glowing forest, magical runes, fireflies, mystical',
-  'a fairy tale princess with shimmering butterfly wings in an enchanted garden, bokeh',
-  'a dark sorceress summoning spirits from a void portal, dramatic lighting, fantasy art',
-  'an underwater mermaid kingdom with glowing coral and ancient ruins, ethereal blue light',
-
-  // Nature / Landscapes
-  'a breathtaking mountain landscape at golden hour, reflection lake, cinematic, 8K',
-  'a massive waterfall in a lush tropical rainforest, misty light rays, epic scale',
-  'a lone wolf howling on a cliff under the northern lights, aurora borealis, ultra detailed',
-  'a field of glowing purple flowers under a starry night sky, milky way, dreamlike',
-  'a giant ancient tree in autumn forest, sunbeams through orange leaves, detailed bark',
-
-  // Futuristic Characters (diverse — not same face)
-  'a male cyborg warrior with golden armor in a desert wasteland, dramatic pose, 4K',
-  'an elegant AI android woman with silver hair and galaxy eyes, studio lighting, fashion portrait',
-  'a young dark-skinned male technomancer with glowing tattoos, urban future city background',
-  'an old wise alien philosopher meditating, wrinkled blue skin, floating crystals',
-  'a female knight in glowing white armor, ethereal wings, holy light, ultra HD',
-
-  // Abstract / Artistic
-  'an abstract explosion of colorful fractals and geometric shapes, psychedelic digital art',
-  'a surreal dreamscape with floating islands and upside-down waterfalls, Salvador Dali style',
-  'a vaporwave aesthetic city at sunset, pink and purple tones, retro neon glow',
-  'intricate mandala art with golden sacred geometry, cosmic background, ultra detailed',
-  'a liquid metal sculpture morphing into organic shapes, studio light, macro photography',
-
-  // Animals
-  'a majestic lion with a galaxy mane, constellation stars in fur, cosmic portrait, 4K',
-  'a white tiger leaping through cherry blossoms, Japan mountain background, cinematic',
-  'a glowing phoenix rising from golden flames, feather detail, mythological, epic',
-  'a giant mechanical elephant in a futuristic city, steampunk style, intricate gears',
-  'an owl with universe galaxy eyes, perched on ancient ruins at night, magical realism',
+  // Artificial Intelligence Core & Networks
+  'a glowing artificial intelligence brain processing data, futuristic neural network, blue holographic light',
+  'a hyper-realistic cyborg face with glowing circuits, cinematic studio lighting, detailed',
+  'a sleek AI robot assistant in a futuristic laboratory, neon lights, 8k resolution',
+  'an abstract representation of artificial intelligence learning, flowing data streams, cyberpunk style',
+  'a microscopic view of a quantum computer chip, glowing gold and blue energy lines, artificial intelligence',
+  
+  // Future Robotics & Cyborgs
+  'a futuristic robot reading a holographic book, highly detailed, neon pink and turquoise',
+  'an AI android meditating, floating glowing geometric shapes, peaceful sci-fi atmosphere',
+  'a high-tech mechanical humanoid examining a glowing orb of light, concept art, masterpiece',
+  'a mechanical cyborg repairing its own arm, futuristic workshop, glowing sparks, hyper detailed',
+  
+  // AI in Environments
+  'a giant AI supercomputer core glowing in a vast dark room, lasers and data streams',
+  'a person plugged into a futuristic AI virtual reality matrix, glowing cables, neon green data',
+  'a cyborg hacker with glowing augmented reality glasses, highly detailed face portrait, dark cyberpunk',
+  'a beautiful AI goddess composed of fiber optic strings, ethereal light, perfect face',
+  'a futuristic robotic eye focusing, macro lens, glowing blue iris with digital code'
 ];
 
 // Style modifiers mixed in randomly for extra variation

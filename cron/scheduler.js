@@ -9,12 +9,12 @@ cron.schedule("0 9 * * *", () => {
   triggerPost();
 });
 
-cron.schedule("10 15 * * *", () => {
+cron.schedule("0 14 * * *", () => {
   console.log("🚀 Running scheduled Instagram post (14:00)...");
   triggerPost();
 });
 
-cron.schedule("56 23 * * *", () => {
+cron.schedule("0 19 * * *", () => {
   console.log("🚀 Running scheduled Instagram post (19:00)...");
   triggerPost();
 });

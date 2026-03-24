@@ -31,12 +31,13 @@ router.get('/verify-token', async (req, res) => {
 
 router.post('/settings', async (req, res) => {
   try {
-    const { freepikApiKey, instagramAccessToken, instagramAccountId } = req.body;
+    const { freepikApiKey, cloudinaryUrl, instagramAccessToken, instagramAccountId } = req.body;
     let settings = await Setting.findOne();
     if (!settings) {
       settings = new Setting();
     }
     settings.freepikApiKey = freepikApiKey;
+    settings.cloudinaryUrl = cloudinaryUrl;
     settings.instagramAccessToken = instagramAccessToken;
     settings.instagramAccountId = instagramAccountId;
     await settings.save();

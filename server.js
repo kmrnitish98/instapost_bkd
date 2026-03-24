@@ -44,7 +44,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/instapost
     if (!settings) {
       settings = await Setting.create({
         freepikApiKey: process.env.FREEPIK_API_KEY || '',
-        imgbbApiKey: process.env.IMGBB_API_KEY || '',
+        cloudinaryUrl: process.env.CLOUDINARY_URL || '',
         instagramAccessToken: process.env.INSTAGRAM_ACCESS_TOKEN || '',
         instagramAccountId: process.env.INSTAGRAM_ACCOUNT_ID || ''
       });
@@ -56,8 +56,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/instapost
         settings.freepikApiKey = process.env.FREEPIK_API_KEY;
         updated = true;
       }
-      if (process.env.IMGBB_API_KEY && settings.imgbbApiKey !== process.env.IMGBB_API_KEY) {
-        settings.imgbbApiKey = process.env.IMGBB_API_KEY;
+      if (process.env.CLOUDINARY_URL && settings.cloudinaryUrl !== process.env.CLOUDINARY_URL) {
+        settings.cloudinaryUrl = process.env.CLOUDINARY_URL;
         updated = true;
       }
       if (process.env.INSTAGRAM_ACCESS_TOKEN && settings.instagramAccessToken !== process.env.INSTAGRAM_ACCESS_TOKEN) {

@@ -1,14 +1,14 @@
 const axios = require('axios');
-const FormData = require('form-data');
+const cloudinary = require('cloudinary').v2;
 
 /**
- * Generates an AI image using Freepik API and returns a public URL via Imgbb.
+ * Generates an AI image using Freepik API and returns a public URL via Cloudinary.
  * Instagram requires a publicly accessible image_url, so we upload the base64
- * image returned by Freepik to Imgbb to get a usable public link.
+ * image returned by Freepik to Cloudinary to get a usable public link.
  *
- * @param {string} freepikApiKey  - Freepik API key
- * @param {string} imgbbApiKey    - Imgbb API key (free at imgbb.com)
- * @param {string} [prompt]       - Optional custom image prompt
+ * @param {string} freepikApiKey     - Freepik API key
+ * @param {string} cloudinaryUrl     - Cloudinary connection URL (e.g., cloudinary://API_KEY:API_SECRET@CLOUD_NAME)
+ * @param {string} [prompt]          - Optional custom image prompt
  * @returns {string} Public image URL suitable for Instagram
  */
 // ── Randomized Prompt System ────────────────────────────────────────────────
@@ -81,7 +81,7 @@ const getRandomPrompt = () => {
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
-const generateImage = async (freepikApiKey, imgbbApiKey, prompt) => {
+const generateImage = async (freepikApiKey, cloudinaryUrl, prompt) => {
   // ── Step 1: Generate image via Freepik ─────────────────────────────────────
   let base64Image;
   try {
@@ -126,31 +126,31 @@ const generateImage = async (freepikApiKey, imgbbApiKey, prompt) => {
     throw new Error(`Freepik Image Generation Failed: ${error.message}`);
   }
 
-  // ── Step 2: Upload base64 to Imgbb to get a public URL ────────────────────
+  // ── Step 2: Upload base64 to Cloudinary to get a public URL ────────────────────
   try {
-    if (!imgbbApiKey) {
-      throw new Error('IMGBB_API_KEY is missing. Add it to your .env file. Get a free key at https://imgbb.com/');
+    if (!cloudinaryUrl) {
+      throw new Error('CLOUDINARY_URL is missing. Add it to your .env file.');
     }
 
-    const form = new FormData();
-    form.append('key', imgbbApiKey);
-    form.append('image', base64Image);
+    // Configure cloudinary with the URL
+    // We don't want to rely on the global environment variable directly since it's passed as an argument.
+    // However, cloudinary.v2.uploader.upload does not directly accept the connection string.
+    // We use cloudinary.config() to set it.
+    cloudinary.config(cloudinaryUrl);
 
-    const imgbbResponse = await axios.post(
-      'https://api.imgbb.com/1/upload',
-      form,
-      { headers: form.getHeaders() }
-    );
+    // Cloudinary expects the base64 string to include the data URI scheme
+    const base64DataUri = `data:image/jpeg;base64,${base64Image}`;
 
-    const publicUrl = imgbbResponse.data?.data?.url || imgbbResponse.data?.data?.display_url;
-    if (!publicUrl) {
-      throw new Error('Imgbb did not return a valid public URL (checked url and display_url)');
-    }
+    const uploadResult = await cloudinary.uploader.upload(base64DataUri, {
+      folder: 'instapost',
+    });
 
-    console.log('✅ Image uploaded to Imgbb:', publicUrl);
+    const publicUrl = uploadResult.secure_url;
+
+    console.log('✅ Image uploaded to Cloudinary:', publicUrl);
     return publicUrl;
   } catch (error) {
-    console.error('Imgbb Upload Error:', error.response?.data || error.message);
+    console.error('Cloudinary Upload Error:', error.message || error);
     throw new Error(`Image Upload Failed: ${error.message}`);
   }
 };

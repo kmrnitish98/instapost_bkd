@@ -5,7 +5,7 @@ const settingSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
-  imgbbApiKey: {
+  cloudinaryUrl: {
     type: String,
     default: ''
   },

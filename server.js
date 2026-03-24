@@ -32,6 +32,12 @@ app.use(express.json());
 // Routes
 app.use('/api', apiRoutes);
 
+// Health check route for cron-job.org to prevent "output too large"
+// Placed top-level so it responds immediately, even before DB connects
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 const Setting = require('./models/Setting');
 
 // Database Connection
@@ -74,10 +80,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/instapost
         console.log('Synced settings from .env to database');
       }
     }
-        // Add this simple route for cron-job.org and health checks
-    app.get('/', (req, res) => {
-      res.status(200).send('Server is active and running');
-    });
         // Start scheduler
     require('./cron/scheduler');
 

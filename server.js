@@ -80,8 +80,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/instapost
         console.log('Synced settings from .env to database');
       }
     }
-        // Start scheduler
-    require('./cron/scheduler');
+    // Cron jobs are now handled externally via /api/cron/trigger-post endpoint
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);

@@ -71,4 +71,23 @@ router.get('/stats', async (req, res) => {
 // Manual trigger
 router.post('/trigger-post', triggerPost);
 
+// External trigger via cron-job.org
+router.get('/cron/trigger-post', async (req, res) => {
+  const secret = req.query.secret || req.headers.authorization?.replace('Bearer ', '');
+  const validSecret = process.env.CRON_SECRET;
+
+  if (!validSecret) {
+    console.error('Missing CRON_SECRET in environment variables');
+    return res.status(500).json({ error: 'Server misconfiguration: CRON_SECRET missing' });
+  }
+
+  if (secret !== validSecret) {
+    console.warn(`Unauthorized cron attempt with secret: ${secret}`);
+    return res.status(401).json({ error: 'Unauthorized: Invalid secret key' });
+  }
+
+  console.log('🚀 Running Instagram post triggered by external cron...');
+  await triggerPost(req, res);
+});
+
 module.exports = router;

@@ -44,11 +44,8 @@ const triggerPost = async (req, res) => {
     });
 
     if (res) {
-      return res.status(200).json({
-        message: 'Post successful',
-        postId,
-        log
-      });
+      // Sirf ek chhota message return karein
+      return res.status(200).send("OK"); 
     }
   } catch (error) {
     console.error('Core Posting Flow Error:', error.message);

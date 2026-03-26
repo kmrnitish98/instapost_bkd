@@ -3,7 +3,20 @@ const ActivityLog = require('../models/ActivityLog');
 const { generateImage } = require('../services/freepikService');
 const { postToInstagram } = require('../services/instagramService');
 
+// ── Global lock to prevent duplicate/concurrent posts ──────────────────────
+let isPostingInProgress = false;
+
 const triggerPost = async (req, res) => {
+  // Prevent concurrent posts — if a post is already being processed, reject new requests
+  if (isPostingInProgress) {
+    console.warn('⚠️ Post already in progress, rejecting duplicate trigger.');
+    if (res && !res.headersSent) {
+      return res.status(429).json({ error: 'A post is already being processed. Please wait.' });
+    }
+    return;
+  }
+
+  isPostingInProgress = true;
   let imageUrl = '';
   const caption = 'Artificial Intelligence generated futuristic art 🤖✨ #ArtificialIntelligence #AI #AIRobot #FutureTech #AIArt';
 
@@ -43,9 +56,14 @@ const triggerPost = async (req, res) => {
       instagramPostId: postId
     });
 
-    if (res) {
-      // Sirf ek chhota message return karein
-      return res.status(200).send("OK"); 
+    console.log('✅ Post successful! Instagram Post ID:', postId);
+
+    if (res && !res.headersSent) {
+      return res.status(200).json({
+        message: 'Post published successfully!',
+        instagramPostId: postId,
+        log
+      });
     }
   } catch (error) {
     console.error('Core Posting Flow Error:', error.message);
@@ -58,12 +76,15 @@ const triggerPost = async (req, res) => {
       errorMessage: error.message
     });
 
-    if (res) {
+    if (res && !res.headersSent) {
       return res.status(500).json({
         error: error.message,
         log
       });
     }
+  } finally {
+    // Always release the lock when done (success or failure)
+    isPostingInProgress = false;
   }
 };
 

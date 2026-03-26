@@ -102,4 +102,27 @@ const getInstagramAccountDetails = async (accessToken) => {
   }
 };
 
-module.exports = { postToInstagram, getInstagramAccountDetails };
+const getInstagramProfileStats = async (accessToken, accountId) => {
+  try {
+    // Fetch profile info including profile picture, username, followers and media count
+    const profileResponse = await axios.get(
+      `https://graph.facebook.com/v19.0/${accountId}`,
+      {
+        params: {
+          fields: 'id,username,profile_picture_url,followers_count,media_count',
+          access_token: accessToken
+        }
+      }
+    );
+
+    return {
+      ...profileResponse.data,
+      profile_views: 0 // Returning 0 since insights are disabled
+    };
+  } catch (error) {
+    console.error('Instagram Stats Error:', error.response?.data || error.message);
+    throw new Error('Failed to fetch Instagram profile stats');
+  }
+};
+
+module.exports = { postToInstagram, getInstagramAccountDetails, getInstagramProfileStats };
